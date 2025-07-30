@@ -1,0 +1,33 @@
+# Use an official PyTorch image with CUDA (or CPU)
+FROM pytorch/pytorch:2.1.0-cuda11.8-cudnn8-runtime
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    ffmpeg \
+    libsm6 \
+    libxext6 \
+    libgl1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip
+RUN pip install --upgrade pip
+
+# Copy requirements directly into container
+# (We'll just specify dependencies inline for now)
+COPY requirements.txt /app/requirements.txt
+
+# Install Python dependencies
+RUN pip install -r requirements.txt
+
+# Copy all application files
+COPY . /app
+
+# Expose the Gradio default port
+EXPOSE 7860
+
+# Command to run your app
+CMD ["python", "MultimodelOCR.py"]

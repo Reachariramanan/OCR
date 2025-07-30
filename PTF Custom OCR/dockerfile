@@ -1,0 +1,47 @@
+# Base image with Python and CUDA
+FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu20.04
+
+# Avoid prompts during package installs
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    python3-dev \
+    python3-setuptools \
+    poppler-utils \
+    git \
+    git-lfs \
+    build-essential \
+    libgl1 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set python3 as default python
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
+# Upgrade pip
+RUN pip install --upgrade pip
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Clone necessary repos
+RUN git clone https://github.com/ByteDance/Dolphin.git /Dolphin && \
+    git lfs install && \
+    git clone https://huggingface.co/ByteDance/Dolphin /Dolphin/hf_model
+
+# Optional: Set working directory
+WORKDIR /app
+
+# Copy your application code if needed
+# COPY . /app
+
+# Expose port for Gradio
+EXPOSE 7860
+
+# Command to start your app (modify as needed)
+CMD ["python", "PTF_Custom_OCR.py"]
+
+

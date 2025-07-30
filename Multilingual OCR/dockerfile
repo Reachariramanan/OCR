@@ -1,0 +1,38 @@
+# Use an official Python image as the base
+FROM python:3.10-slim
+
+# Set environment variables to prevent Python from buffering stdout/stderr
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    poppler-utils \
+    tesseract-ocr \
+    libgl1 \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    build-essential \
+    git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create working directory
+WORKDIR /app
+
+# Copy your app files
+COPY . /app
+
+# Install Python dependencies
+RUN pip install --upgrade pip && \
+    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu && \
+    pip install -r requirements.txt
+
+# Expose the port Gradio will run on
+EXPOSE 7860
+
+# Command to run the app
+CMD ["python", "Multilingual.py"]

@@ -1,0 +1,31 @@
+# Base image with Python and essential packages
+FROM python:3.10-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies (if needed)
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy project files into the container
+COPY . /app
+
+# Install Python dependencies
+RUN pip install --upgrade pip && pip install \
+    gradio==4.30.0 \
+    requests \
+    jsonschema
+
+# Set environment variables
+ENV HF_MODEL=meta-llama/Llama-3.1-8B-Instruct
+ENV HF_API_TOKEN=your_huggingface_token_here
+ENV DEBUG=True
+
+# Expose the Gradio default port
+EXPOSE 7860
+
+# Run the Gradio app
+CMD ["python", "CAGLLMfront.py"]
