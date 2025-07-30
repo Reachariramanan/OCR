@@ -61,9 +61,6 @@ EXAMPLE = (
 with gr.Blocks() as demo:
     gr.Markdown("""
     ## ⚙️ Pravartak Foundation's NLP Playground
-
-    **Left:** BERT NER (`mdroth/bert-finetuned-ner-accelerate`, ~108M parameters)  
-    **Right:** Flair POS (`flair/pos-english`, ~4.48M parameters)
     """)
 
     # Single button to populate example text
@@ -73,7 +70,7 @@ with gr.Blocks() as demo:
         # --- Left column: NER ---
         with gr.Column():
             gr.Markdown("### Named Entity Recognition")
-            gr.Markdown("**Model:** `mdroth/bert-finetuned-ner-accelerate` (~108M params)")
+            gr.Markdown("**Model:** `bert-finetuned-ner-108M` (~108M params)")
             ner_input = gr.Textbox(lines=5, placeholder="Enter text for NER…")
             ner_out_df   = gr.Dataframe(
                 headers=["Entity", "Text", "Start", "End"],
@@ -98,7 +95,12 @@ with gr.Blocks() as demo:
         # --- Right column: POS ---
         with gr.Column():
             gr.Markdown("### Part‑of‑Speech Tagging")
-            gr.Markdown("**Model:** `flair/pos-english` (~4.48M params)")
+            gr.Markdown("**Base Model:** `flair/pos-english` (~4.48M params)")
+            gr.Markdown(
+            "**Description:** The Flair POS English model uses stacked Flair embeddings "
+            "(2048 dimensions each, combined to 4096 input size), with a Bi‑LSTM of one layer "
+            "and 256 hidden units, totaling approximately 4.48 million parameters."
+            )
             pos_input    = gr.Textbox(lines=2, placeholder="Enter text for POS tagging…")
             pos_out      = gr.Textbox(
                 label="Token → POS (JSON)",
